@@ -20,6 +20,7 @@
 
     _NODE_RESET = "\x1B[0"
     _NODE_BOLD = ";1"
+    _NODE_UNDERLINE = ";4"
     _NODE_COLOR = #https://wiki.archlinux.org/index.php/Color_Bash_Prompt
      'green': ';32'
      'red': ';31'
@@ -54,9 +55,27 @@ LOG 'info', 'connector_startup', 'Connector starting', {user: 'varuna'}, {color:
       s += " #{_twoDigit date.getHours()}:#{_twoDigit date.getMinutes()}:#{_twoDigit date.getSeconds()}"
       return s
 
+     stackText: ->
+      try
+       throw new Error ''
+      catch e
+       return '' unless e.stack?
+       stack = e.stack
+
+      stack = stack.split '\n'
+      stack = stack.slice 4
+      s = "#{@lineBreak}"
+      for line, i in stack
+       s += "#{@indent}#{line.trim()}#{@lineBreak}"
+
+      return s
+
      log: (type, id, text, params, options) ->
       unless TYPE[type]
        throw new Error 'Unknown type'
+
+      options ?= {}
+      params ?= {}
 
       if not @color
        @logPlain type, id, text, params, options
@@ -71,7 +90,10 @@ LOG 'info', 'connector_startup', 'Connector starting', {user: 'varuna'}, {color:
       s += "#{id}#{@separator}#{text}#{@lineBreak}"
       for k, v of params
        s += "#{@indent}#{k}:#{JSON.stringify v}#{@lineBreak}"
+      if options.stack
+       s += @stackText()
 
+      s = s.substr 0, s.length - @lineBreak.length
       @_log s
 
      logNode: (type, id, text, params, options) ->
@@ -81,8 +103,13 @@ LOG 'info', 'connector_startup', 'Connector starting', {user: 'varuna'}, {color:
       s += "#{_NODE_RESET}#{_NODE_BOLD}m#{id}#{_NODE_RESET}m#{@separator}"
       s += "#{text}#{@lineBreak}"
       for k, v of params
-       s += "#{@indent}#{k}:#{JSON.stringify v}#{@lineBreak}"
+       s += "#{@indent}#{_NODE_RESET}#{_NODE_UNDERLINE}m#{k}#{_NODE_RESET}m"
+       s += ":#{JSON.stringify v}#{@lineBreak}"
 
+      if options.stack
+       s += @stackText()
+
+      s = s.substr 0, s.length - @lineBreak.length
       @_log s
 
      logBrowser: (type, id, text, params, options) ->
@@ -92,6 +119,10 @@ LOG 'info', 'connector_startup', 'Connector starting', {user: 'varuna'}, {color:
       for k, v of params
        s += "#{@indent}#{k}:#{JSON.stringify v}#{@lineBreak}"
 
+      if options.stack
+       s += @stackText()
+
+      s = s.substr 0, s.length - @lineBreak.length
       @_log s
 
 
