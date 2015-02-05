@@ -24,9 +24,17 @@
     _NODE_COLOR = #https://wiki.archlinux.org/index.php/Color_Bash_Prompt
      'green': ';32'
      'red': ';31'
-     'blue': ";34"
-     'yellow': ";33"
+     'blue': ';34'
+     'yellow': ';33'
      '': ''
+
+    _BROWSER_BOLD = 'font-weight: bold;'
+    _BROWSER_UNDERLINE = 'text-decoration: underline'
+    _BROWSER_COLOR =
+     'green': 'color: green;'
+     'red': 'color: red;'
+     'blue': 'color: blue;'
+     'yellow': 'color: yellow'
 
     _twoDigit = (n) ->
      s = "0#{n}"
@@ -44,7 +52,7 @@ LOG 'info', 'connector_startup', 'Connector starting', {user: 'varuna'}, {color:
 
     class Logger
      constructor: ->
-      @_log = console.log
+      @_log = console.log.bind console
       @separator = '\t'
       @lineBreak = '\n'
       @indent = '\t\t'
@@ -76,6 +84,7 @@ LOG 'info', 'connector_startup', 'Connector starting', {user: 'varuna'}, {color:
 
       options ?= {}
       params ?= {}
+      text ?= ''
 
       if not @color
        @logPlain type, id, text, params, options
@@ -89,7 +98,7 @@ LOG 'info', 'connector_startup', 'Connector starting', {user: 'varuna'}, {color:
       s += "#{@dateToString new Date}#{@separator}"
       s += "#{id}#{@separator}#{text}#{@lineBreak}"
       for k, v of params
-       s += "#{@indent}#{k}:#{JSON.stringify v}#{@lineBreak}"
+       s += "#{@indent}#{k}: #{JSON.stringify v}#{@lineBreak}"
       if options.stack
        s += @stackText()
 
@@ -104,7 +113,7 @@ LOG 'info', 'connector_startup', 'Connector starting', {user: 'varuna'}, {color:
       s += "#{text}#{@lineBreak}"
       for k, v of params
        s += "#{@indent}#{_NODE_RESET}#{_NODE_UNDERLINE}m#{k}#{_NODE_RESET}m"
-       s += ":#{JSON.stringify v}#{@lineBreak}"
+       s += ": #{JSON.stringify v}#{@lineBreak}"
 
       if options.stack
        s += @stackText()
@@ -113,17 +122,23 @@ LOG 'info', 'connector_startup', 'Connector starting', {user: 'varuna'}, {color:
       @_log s
 
      logBrowser: (type, id, text, params, options) ->
-      s = "#{TYPE[type]}#{@separator}"
+      color = _BROWSER_COLOR[TYPE_COLOR[type]]
+      styles = []
+      s = "%c#{TYPE[type]}%c#{@separator}"
       s += "#{@dateToString new Date}#{@separator}"
-      s += "#{id}#{@separator}#{text}#{@lineBreak}"
+      s += "%c#{id}%c#{@separator}#{text}#{@lineBreak}"
+      styles = [color, '', _BROWSER_BOLD, '']
       for k, v of params
-       s += "#{@indent}#{k}:#{JSON.stringify v}#{@lineBreak}"
+       s += "#{@indent}%c#{k}%c: #{JSON.stringify v}#{@lineBreak}"
+       styles.push _BROWSER_UNDERLINE
+       styles.push ''
 
       if options.stack
        s += @stackText()
 
       s = s.substr 0, s.length - @lineBreak.length
-      @_log s
+      args = [s].concat styles
+      @_log.apply console, args
 
 
 
