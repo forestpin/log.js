@@ -85,6 +85,16 @@ LOG 'info', 'connector_startup', 'Connector starting', {user: 'varuna'}, {color:
 
       @_log s
 
+     logBrowser: (type, id, text, params, options) ->
+      s = "#{TYPE[type]}#{@separator}"
+      s += "#{@dateToString new Date}#{@separator}"
+      s += "#{id}#{@separator}#{text}#{@lineBreak}"
+      for k, v of params
+       s += "#{@indent}#{k}:#{JSON.stringify v}#{@lineBreak}"
+
+      @_log s
+
+
 
 
     LOG = new Logger
