@@ -41,6 +41,10 @@
      s.substr s.length - 2
 
 
+    CONSOLE = {}
+    if console?
+     CONSOLE = console
+
 ##LOG
 
 '''
@@ -52,7 +56,10 @@ LOG 'info', 'connector_startup', 'Connector starting', {user: 'varuna'}, {color:
 
     class Logger
      constructor: ->
-      @_log = console.log.bind console
+      if CONSOLE?.log?
+       @_log = CONSOLE.log.bind CONSOLE
+      else
+       @_log = -> null
       @separator = '\t'
       @lineBreak = '\n'
       @indent = '\t\t'
@@ -138,7 +145,7 @@ LOG 'info', 'connector_startup', 'Connector starting', {user: 'varuna'}, {color:
 
       s = s.substr 0, s.length - @lineBreak.length
       args = [s].concat styles
-      @_log.apply console, args
+      @_log.apply CONSOLE, args
 
 
 
