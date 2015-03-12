@@ -71,11 +71,11 @@ LOG 'info',
 
      dateToString: (date) ->
       return "
-       #{date.getFullYear()}-
-       #{_twoDigit date.getMonth() + 1}-
+       #{date.getFullYear()}-\
+       #{_twoDigit date.getMonth() + 1}-\
        #{_twoDigit date.getDate()}
-       #{_twoDigit date.getHours()}:
-       #{_twoDigit date.getMinutes()}:
+       #{_twoDigit date.getHours()}:\
+       #{_twoDigit date.getMinutes()}:\
        #{_twoDigit date.getSeconds()}"
 
      stackText: ->
