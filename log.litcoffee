@@ -6,16 +6,16 @@
 
     TYPE =
      'debug': 'DEBUG'
-     'stat' : 'STAT '
-     'info' : 'INFO '
-     'warn' : 'WARN '
+     'stat': 'STAT '
+     'info': 'INFO '
+     'warn': 'WARN '
      'error': 'ERROR'
 
     TYPE_COLOR  =
      'debug': ''
-     'stat' : 'green'
-     'info' : 'blue'
-     'warn' : 'yellow'
+     'stat': 'green'
+     'info': 'blue'
+     'warn': 'yellow'
      'error': 'red'
 
     _NODE_RESET = "\x1B[0"
@@ -52,7 +52,11 @@ LOG type, id, text, params, options
 
 ###Example
 '''coffeescript
-LOG 'info', 'connector_startup', 'Connector starting', {user: 'varuna'}, {color: false}
+LOG 'info',
+ 'connector_startup'
+ 'Connector starting'
+ {user: 'varuna'}
+ {color: false}
 
     class Logger
      constructor: ->
@@ -66,9 +70,13 @@ LOG 'info', 'connector_startup', 'Connector starting', {user: 'varuna'}, {color:
       @color = true
 
      dateToString: (date) ->
-      s = "#{date.getFullYear()}-#{_twoDigit date.getMonth() + 1}-#{_twoDigit date.getDate()}"
-      s += " #{_twoDigit date.getHours()}:#{_twoDigit date.getMinutes()}:#{_twoDigit date.getSeconds()}"
-      return s
+      return "
+       #{date.getFullYear()}-
+       #{_twoDigit date.getMonth() + 1}-
+       #{_twoDigit date.getDate()}
+       #{_twoDigit date.getHours()}:
+       #{_twoDigit date.getMinutes()}:
+       #{_twoDigit date.getSeconds()}"
 
      stackText: ->
       try
