@@ -45,6 +45,14 @@
     if console?
      CONSOLE = console
 
+    JSON_STRINGIFY = (v) ->
+     try
+      s = JSON.stringify v
+     catch e
+      s = e.message
+
+     return s
+
 ##LOG
 
 '''
@@ -113,7 +121,7 @@ LOG 'info',
       s += "#{@dateToString new Date}#{@separator}"
       s += "#{id}#{@separator}#{text}#{@lineBreak}"
       for k, v of params
-       s += "#{@indent}#{k}: #{JSON.stringify v}#{@lineBreak}"
+       s += "#{@indent}#{k}: #{JSON_STRINGIFY v}#{@lineBreak}"
       if options.stack
        s += @stackText()
 
@@ -128,7 +136,7 @@ LOG 'info',
       s += "#{text}#{@lineBreak}"
       for k, v of params
        s += "#{@indent}#{_NODE_RESET}#{_NODE_UNDERLINE}m#{k}#{_NODE_RESET}m"
-       s += ": #{JSON.stringify v}#{@lineBreak}"
+       s += ": #{JSON_STRINGIFY v}#{@lineBreak}"
 
       if options.stack
        s += @stackText()
@@ -144,7 +152,7 @@ LOG 'info',
       s += "%c#{id}%c#{@separator}#{text}#{@lineBreak}"
       styles = [color, '', _BROWSER_BOLD, '']
       for k, v of params
-       s += "#{@indent}%c#{k}%c: #{JSON.stringify v}#{@lineBreak}"
+       s += "#{@indent}%c#{k}%c: #{JSON_STRINGIFY v}#{@lineBreak}"
        styles.push _BROWSER_UNDERLINE
        styles.push ''
 
