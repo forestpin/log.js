@@ -109,14 +109,18 @@ LOG 'info',
       params ?= {}
       text ?= ''
 
-      if not @color
-       @logPlain type, id, text, params, options
-      else if BROWSER
-       @logBrowser type, id, text, params, options
-      else
-       @logNode type, id, text, params, options
+      if (typeof params) is 'string'
+       params =
+        data: params
 
-     logPlain: (type, id, text, params, options) ->
+      if not @color
+       @_logPlain type, id, text, params, options
+      else if BROWSER
+       @_logBrowser type, id, text, params, options
+      else
+       @_logNode type, id, text, params, options
+
+     _logPlain: (type, id, text, params, options) ->
       s = "#{TYPE[type]}#{@separator}"
       s += "#{@dateToString new Date}#{@separator}"
       s += "#{id}#{@separator}#{text}#{@lineBreak}"
@@ -128,7 +132,7 @@ LOG 'info',
       s = s.substr 0, s.length - @lineBreak.length
       @_log s
 
-     logNode: (type, id, text, params, options) ->
+     _logNode: (type, id, text, params, options) ->
       color = _NODE_COLOR[TYPE_COLOR[type]]
       s = "#{_NODE_RESET}#{color}m#{TYPE[type]}#{_NODE_RESET}m#{@separator}"
       s += "#{@dateToString new Date}#{@separator}"
@@ -144,7 +148,7 @@ LOG 'info',
       s = s.substr 0, s.length - @lineBreak.length
       @_log s
 
-     logBrowser: (type, id, text, params, options) ->
+     _logBrowser: (type, id, text, params, options) ->
       color = _BROWSER_COLOR[TYPE_COLOR[type]]
       styles = []
       s = "%c#{TYPE[type]}%c#{@separator}"
