@@ -76,6 +76,7 @@ LOG 'info',
       @lineBreak = '\n'
       @indent = '\t\t'
       @color = true
+      @disabled = {}
 
      dateToString: (date) ->
       return "
@@ -85,6 +86,12 @@ LOG 'info',
        #{_twoDigit date.getHours()}:\
        #{_twoDigit date.getMinutes()}:\
        #{_twoDigit date.getSeconds()}"
+
+     disable: (type) ->
+      @disabled[type] = true
+
+     enable: (type) ->
+      @disabled[type] = false
 
      stackText: ->
       try
@@ -104,6 +111,8 @@ LOG 'info',
      log: (type, id, text, params, options) ->
       unless TYPE[type]
        throw new Error 'Unknown type'
+      if @disabled[type] is true
+       return
 
       if (typeof text) isnt 'string'
        options = params
@@ -179,9 +188,13 @@ LOG 'info',
 
     if not BROWSER
      exports.log = LOG.log.bind LOG
+     exports.disable = LOG.disable.bind LOG
+     exports.enable = LOG.enable.bind LOG
      exports.Logger = Logger
     else
      self.Logger =
       Logger: Logger
       log: LOG.log.bind LOG
+      enable: LOG.enable.bind LOG
+      disable: LOG.disable.bind LOG
 
