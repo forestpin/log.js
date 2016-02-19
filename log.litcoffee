@@ -105,6 +105,11 @@ LOG 'info',
       unless TYPE[type]
        throw new Error 'Unknown type'
 
+      if (typeof text) isnt 'string'
+       options = params
+       params = text
+       text = ''
+
       options ?= {}
       params ?= {}
       text ?= ''
