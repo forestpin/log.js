@@ -67,15 +67,25 @@ LOG 'info',
  {color: false}
 
     class Logger
-     constructor: ->
-      if CONSOLE?.log?
+     constructor: (options) ->
+      options ?= {}
+      if options.log?
+       @_log = options.log
+      else if CONSOLE?.log?
        @_log = CONSOLE.log.bind CONSOLE
       else
        @_log = -> null
+
+      if options.platform?
+       @platform = options.platform
+      else if BROWSER
+       @platform = 'browser'
+      else
+       @platform = 'node'
+
       @separator = '\t'
       @lineBreak = '\n'
       @indent = '\t\t'
-      @color = true
       @disabled = {}
 
      dateToString: (date) ->
@@ -127,12 +137,13 @@ LOG 'info',
        params =
         data: params
 
-      if not @color
-       @_logPlain type, id, text, params, options
-      else if BROWSER
-       @_logBrowser type, id, text, params, options
-      else
-       @_logNode type, id, text, params, options
+      switch @platform
+       when 'browser'
+        @_logBrowser type, id, text, params, options
+       when 'node'
+        @_logNode type, id, text, params, options
+       else
+        @_logPlain type, id, text, params, options
 
      _logPlain: (type, id, text, params, options) ->
       s = "#{TYPE[type]}#{@separator}"
